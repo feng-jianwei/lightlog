@@ -22,3 +22,6 @@ jobs:
       - name: building
         working-directory: target
         run: cmake .. && make
+      - name: test
+        working-directory: target
+        run: make test
