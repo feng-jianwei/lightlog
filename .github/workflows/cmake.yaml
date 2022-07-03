@@ -21,7 +21,9 @@ jobs:
 
       - name: building
         working-directory: target
-        run: cmake .. && make
+        run:
+          cpu=$(cat /proc/cpuinfo | grep processor|wc -l)
+          cmake .. && make -j${cpu}
       - name: test
         working-directory: target
         run: make test
