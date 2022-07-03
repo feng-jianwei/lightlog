@@ -1,6 +1,5 @@
 #include "lightlog.h"
 #include "gtest/gtest.h"
-#include <sys/syslimits.h>
 using namespace std;
 using namespace LightLog;
 
