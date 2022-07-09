@@ -20,7 +20,7 @@ void LogMgr::AddLog(const std::string &log)
 std::string LogMgr::GetLog()
 {
 	std::unique_lock<mutex> guard(logMutex);
-	if (logs.empty()) {
+	while (logs.empty()) {
 		variable.wait(guard);
 	}
 	string log = move(logs.front());
