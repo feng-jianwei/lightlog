@@ -1,5 +1,4 @@
 set(src_list 
-	${CMAKE_CURRENT_SOURCE_DIR}/logmgr/logmgr.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/logger/logger.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/lightlog.cpp
 	)
