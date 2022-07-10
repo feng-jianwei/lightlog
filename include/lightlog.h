@@ -9,8 +9,10 @@
 #define LIGHT_EXPORT __attribute__((visibility("default")))
 
 namespace LightLog {
-
 LIGHT_EXPORT void OpenAyncLog();
+
+LIGHT_EXPORT void CloseLog();
+
 LIGHT_EXPORT void LightAyncLog(const std::string &log);
 
 LIGHT_EXPORT void LightSyncLog(const std::string &log);
@@ -30,6 +32,5 @@ LIGHT_EXPORT void SyncLog(const std::string &formatLog, types&& ... args)
 	size_t logSize= snprintf(LogStr, 300, formatLog.c_str(), std::forward<types>(args) ...);
 	LightSyncLog(std::string(LogStr));
 }
-
 }
 #endif

@@ -1,12 +1,8 @@
-#include <cstdlib>
-#include <ctime>
-#include <fstream>
-#include <iomanip>
-#include <mutex>
-#include <sys/fcntl.h>
+#include <atomic>
+#include <string>
 #include <thread>
+#include <vector>
 #include "logger.h"
-#include "logmgr/logmgr.h"
 #include "sys/stat.h"
 
 using namespace std;
@@ -18,25 +14,54 @@ Logger *Logger::Instance()
 
 void Logger::Start()
 {
-	thread t([this] {
-				while (true) {
-					DirectWriteLog(LogMgr::Instance()->GetLog());
+	worker = thread([this] {
+					while (!isExit) {
+						DirectWriteLog(GetLogs());
+					}
 				}
-			}
-		);
-	t.detach();
+			);
 }
 
-void Logger::DirectWriteLog(const std::string &log)
+void Logger::Stop()
+{
+	isExit = true;
+	if (worker.joinable()) {
+		worker.join();
+	};
+}
+
+void Logger::DirectWriteLog(const vector<std::string> &vecLogs)
 {
 	std::lock_guard<std::mutex> guard(fileMutex);
 	if (fileName.empty() || !CheckLogFileSize()) {
 		NewLogFile();	
 	}	
 	fileStream.open(fileName, ios::app|ios::out);
-	fileStream << log << '\n';
+	for (const auto &log : vecLogs) {
+		fileStream << log << '\n';
+	}
 	fileStream.close();
 	fileStream.clear();
+}
+
+void Logger::AddLogs(const vector<string> &vecLogs)
+{
+	std::unique_lock guard(logMutex);
+	for (const auto &log : vecLogs) {
+		logs.push_back(log);
+	}	
+	cond.notify_one();
+}
+
+std::vector<std::string> Logger::GetLogs()
+{
+	std::vector<string> tmp;
+	std::unique_lock guard(logMutex);
+	while (logs.empty()) {
+		cond.wait(guard);
+	}
+	logs.swap(tmp);
+	return move(tmp);
 }
 
 bool Logger::CheckLogFileSize()
@@ -52,6 +77,7 @@ void Logger::SetLogPath(const std::string &logPath)
 
 void Logger::NewLogFile()
 {
+	fileName.clear();
 	if (logPath.empty()) {
 		char *pwd = getenv("PWD");
 		fileName.append(pwd ? "" : string(pwd));
