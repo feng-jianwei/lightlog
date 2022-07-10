@@ -1,6 +1,6 @@
 # 设置CMake版本
 cmake_minimum_required(VERSION 3.16)
-
+set(CMAKE_MACOSX_RPATH 0)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 # 打开编译数据库生成
@@ -18,5 +18,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(BUILD_SHARED_LIBS "Build lightlog_lib as a shared library." ON)
 
 add_subdirectory(src)
-enable_testing()
-add_subdirectory(test)
+if(test)
+	enable_testing()
+	add_subdirectory(test)
+endif()
