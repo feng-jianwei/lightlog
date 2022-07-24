@@ -18,19 +18,19 @@ LIGHT_EXPORT void LightAyncLog(const std::string &log);
 LIGHT_EXPORT void LightSyncLog(const std::string &log);
 
 template <typename... types>
-LIGHT_EXPORT void AyncLog(const std::string &formatLog, types&&... args)
-{
-	char LogStr[300] = {0};
-	size_t logSize= snprintf(LogStr, 300, formatLog.c_str(), std::forward<types>(args) ...);
-	LightAyncLog(std::string(LogStr));
+LIGHT_EXPORT void AyncLog(const std::string &formatLog, types &&...args) {
+  char LogStr[300] = {0};
+  size_t logSize =
+      snprintf(LogStr, 300, formatLog.c_str(), std::forward<types>(args)...);
+  LightAyncLog(std::string(LogStr));
 }
 
 template <typename... types>
-LIGHT_EXPORT void SyncLog(const std::string &formatLog, types&& ... args)
-{
-	char LogStr[300] = {0};
-	size_t logSize= snprintf(LogStr, 300, formatLog.c_str(), std::forward<types>(args) ...);
-	LightSyncLog(std::string(LogStr));
+LIGHT_EXPORT void SyncLog(const std::string &formatLog, types &&...args) {
+  char LogStr[300] = {0};
+  size_t logSize =
+      snprintf(LogStr, 300, formatLog.c_str(), std::forward<types>(args)...);
+  LightSyncLog(std::string(LogStr));
 }
-}
+} // namespace LightLog
 #endif
